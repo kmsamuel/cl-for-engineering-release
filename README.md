@@ -175,7 +175,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - [Avalanche](https://github.com/ContinualAI/avalanche) continual learning library
-- [PointNet](https://github.com/charlesq34/pointnet](https://guochengqian.github.io/PointNeXt/modelzoo/) architecture
+- [PointNet](https://guochengqian.github.io/PointNeXt/modelzoo/) pretrained architecture
 - Dataset contributors: DrivAerNet, ShapeNet, SHIPD, and RAADL datasets
 
 ## Contact
