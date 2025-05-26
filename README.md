@@ -116,16 +116,6 @@ chmod +x run_all_strat_exps.sh
 | `--pretrained` | Use pretrained model | `False` | `True`/`False` or `PointNet`/`PointNeXt` |
 | `--model_path` | Pretrained model path | `""` | Path to `.pth` file |
 
-### Dataset-Specific Options
-
-```bash
-# SHIPD specific
---normalize_labels    # Apply z-score normalization to labels
---use_validation     # Use validation set for hyperparameter tuning
-
-# RAADL specific  
---use_validation     # Use validation set instead of training set
-```
 
 ## Results and Analysis
 
