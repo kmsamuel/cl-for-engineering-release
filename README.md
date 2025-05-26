@@ -3,11 +3,13 @@ Benchmarking engineering tasks in the continual learning setting.
 
 # Point Cloud Continual Learning Framework
 
-A comprehensive framework for continual learning experiments on 3D point cloud datasets, supporting multiple architectures and continual learning strategies for geometric deep learning tasks.
+A comprehensive framework for continual learning experiments on 3D point cloud datasets, supporting multiple arcSHIPDDhitectures and continual learning strategies for geometric deep learning tasks.
 
 ## Overview
 
-This repository implements continual learning algorithms for point cloud-based regression tasks across three major datasets:
+This repository implements continual learning algorithms for point cloud-based regression tasks across five major datasets:
+- **DrivAerNet**: Drag coefficient prediction for automotive design
+- **DrivAerNet++**: Drag coefficient prediction for automotive design
 - **ShapeNet Cars**: Drag coefficient prediction for automotive design
 - **SHIPD**: Wave resistance coefficient prediction for ship hull design  
 - **RAADL**: Aerodynamic coefficient prediction for aircraft design
@@ -24,11 +26,8 @@ This repository implements continual learning algorithms for point cloud-based r
 ## Installation
 
 ### Prerequisites
-
 ```bash
 # Python 3.8+
-conda create -n cl_pointcloud python=3.8
-conda activate cl_pointcloud
 ```
 
 ### Dependencies
@@ -61,42 +60,14 @@ pip install pymeshlab
 
 ## Repository Structure
 
-```
-├── datasets.py                 # Clean dataset implementations
-├── *_Benchmark.py              # Benchmark creation for each dataset
-├── main.py                     # Main training scripts
-├── pretrained_model*.py        # Pretrained model architectures
-├── refinement_model.py         # Model refinement utilities
-├── loss.py                     # Custom loss functions
-├── run_all_strat_exps.sh      # Experiment runner scripts
-├── models/                     # Pretrained model checkpoints
-├── data/                       # Dataset directories
-│   ├── shapenet_cars/
-│   ├── pointclouds/           # SHIPD data
-│   └── stl_pointclouds/       # RAADL data
-├── checkpoints/               # Training checkpoints
-├── results/                   # Experiment results
-└── logs/                      # Training logs
-```
+The repository is organized into three main benchmark directories (DRIVAERNET_Par, DRIVAERNET_PC, SHAPENET_PC/, SHIPD_Par/, SHIPD_PC/,and RAADL/), each containing a complete implementation for continual learning experiments on that specific dataset. Each benchmark directory includes its own main.py training script, datasets.py dataset implementation, benchmark creation file, and relevant model architectures. Shared resources include the models/ directory for pretrained checkpoints, data/ for organized datasets with train/validation/test splits, and auto-generated directories for checkpoints/, results/, and logs/. This modular structure allows researchers to work with individual benchmarks independently while maintaining consistency across implementations.
 
 ## Quick Start
 
 ### 1. Prepare Your Data
 
-Organize your datasets in the following structure:
-
-```bash
-data/
-├── shapenet_cars/
-│   ├── pointclouds/           # .pt files
-│   └── train_val_test_splits/
-├── pointclouds/               # SHIPD dataset
-│   ├── *.pt files
-│   └── CW_all.csv
-└── stl_pointclouds/           # RAADL dataset
-    ├── *.pt files
-    └── all_data_2024_filtered.csv
-```
+Datasets should be organized in the following structure:
+Each benchmark should host a data/ folder where there are pointclouds (or a csv file for the parametric benchmarks) and target files (csv files) as well as train_test_val splits. SHIPD_Par uses .npy files of the inputs and outputs. The datasets.py files should parse through the data in this folder and create a dataset class, and the benchmark file should take the dataset and create a benchmark using the given scenario (as well as split the dataset into train, test, val).
 
 ### 2. Download Pretrained Models
 
@@ -104,43 +75,7 @@ Place pretrained models in the `models/` directory:
 - `PN_best.pth` - Pretrained PointNet model
 - `pointnext_best.pth` - Pretrained PointNeXt model (if available)
 
-### 3. Run Basic Experiments
-
-#### ShapeNet Cars
-```bash
-# Naive baseline
-python main.py --exp_name "ShapeNet_naive_baseline" --strategy "naive" --epochs 150 --batch_size 8 --base_seed 42
-
-# Experience Replay
-python main.py --exp_name "ShapeNet_replay" --strategy "replay" --mem_size 1000 --epochs 150 --batch_size 8 --base_seed 42
-
-# With pretrained model
-python main.py --exp_name "ShapeNet_pretrained" --strategy "naive" --pretrained=True --model_path "models/PN_best.pth" --epochs 100 --batch_size 8
-```
-
-#### SHIPD (Ship Hull Design)
-```bash
-# Naive baseline with pretrained model
-python main.py --exp_name "SHIPD_naive_pretrained" --strategy "naive" --pretrained "PointNet" --model_path "models/PN_best.pth" --epochs 150 --lr 0.0005 --batch_size 80
-
-# EWC regularization
-python main.py --exp_name "SHIPD_ewc" --strategy "ewc" --ewc_lambda 10000 --pretrained "PointNet" --model_path "models/PN_best.pth" --epochs 150 --batch_size 80
-
-# Experience Replay
-python main.py --exp_name "SHIPD_replay" --strategy "replay" --mem_size 1600 --pretrained "PointNet" --model_path "models/PN_best.pth" --epochs 150 --batch_size 32
-```
-
-#### RAADL (Aircraft Design)
-```bash
-# Naive baseline
-python main.py --exp_name "RAADL_naive" --strategy "naive" --pretrained=True --model_path "models/PN_best.pth" --epochs 100 --batch_size 8
-
-# A-GEM
-python main.py --exp_name "RAADL_agem" --strategy "agem" --gem_ppe 100 --sample_size 10 --pretrained=True --model_path "models/PN_best.pth" --epochs 100
-```
-
-### 4. Run Comprehensive Experiments
-
+### 3. Run Experiments
 Use the provided bash scripts to run multiple strategies:
 
 ```bash
@@ -157,26 +92,9 @@ chmod +x run_all_strat_exps.sh
 |----------|-------------|----------------|
 | **Naive** | Sequential training without mitigation | - |
 | **Cumulative** | Joint training (upper bound) | - |
-| **Experience Replay** | Store and replay past samples | `--mem_size` |
+| **Experience Replay (ER)** | Store and replay past samples | `--mem_size` |
 | **EWC** | Elastic Weight Consolidation | `--ewc_lambda` |
-| **A-GEM** | Averaged Gradient Episodic Memory | `--gem_ppe`, `--sample_size` |
-| **LwF** | Learning without Forgetting | `--lwf_alpha`, `--lwf_temp` |
-
-### Strategy-Specific Parameters
-
-```bash
-# Experience Replay
---strategy replay --mem_size 1600
-
-# EWC 
---strategy ewc --ewc_lambda 10000
-
-# A-GEM
---strategy agem --gem_ppe 100 --sample_size 10
-
-# Learning without Forgetting
---strategy lwf --lwf_alpha 1.0 --lwf_temp 2.0
-```
+| **GEM** | Gradient Episodic Memory | `--gem_ppe` |
 
 ## Configuration Options
 
@@ -185,7 +103,7 @@ chmod +x run_all_strat_exps.sh
 | Argument | Description | Default | Options |
 |----------|-------------|---------|---------|
 | `--exp_name` | Experiment name | `exp` | Any string |
-| `--strategy` | CL strategy | `naive` | `naive`, `cumulative`, `replay`, `ewc`, `agem`, `lwf` |
+| `--strategy` | CL strategy | `naive` | `naive`, `cumulative`, `replay`, `ewc`, `gem`|
 | `--epochs` | Epochs per experience | `100` | Integer |
 | `--batch_size` | Training batch size | `32` | Integer |
 | `--lr` | Learning rate | `0.001` | Float |
@@ -241,40 +159,16 @@ The framework automatically generates:
 - Training progression visualization
 - Performance comparison across strategies
 
-## Advanced Usage
-
-### Custom Benchmarks
-
-Create custom continual learning scenarios:
-
-```python
-from datasets import ShapeNetCars
-from ShapeNetCars_Benchmark import create_shapenet_benchmark
-
-# Custom class order
-benchmark = create_shapenet_benchmark(
-    num_experiences=4,
-    class_order=[0, 1, 2, 3]  # Custom order
-)
-```
-
-### Performance Tips
-
-- Use SSD storage for faster data loading
-- Enable `pin_memory=True` for GPU training
-- Use `persistent_workers=True` for faster epoch transitions
-- Monitor GPU memory usage with `nvidia-smi`
-
 ## Citation
 
 If you use this framework in your research, please cite:
 
 ```bibtex
-@misc{pointcloud_continual_learning,
+@misc{cl_for_engineering,
   title={Point Cloud Continual Learning Framework},
-  author={Your Name},
+  author=Kaira Samuel,
   year={2025},
-  url={https://github.com/your-org/your-repo}
+  url={https://github.com/kmsamuel/cl-for-engineering-release}
 }
 ```
 
