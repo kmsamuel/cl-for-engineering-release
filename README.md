@@ -45,7 +45,7 @@ To install the modified Avalanche library required for these benchmarks:
 
 ```bash
 git clone https://github.com/kmsamuel/cl-for-engineering-avalanche.git
-cd cl-for-engineering/avalanche
+cd cl-for-engineering-avalanche/avalanche
 pip install -e .
 
 ### Optional Dependencies
