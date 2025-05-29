@@ -44,7 +44,7 @@ pip install trimesh pyvista
 To install the modified Avalanche library required for these benchmarks:
 
 ```bash
-git clone https://github.com/kmsamuel/cl-for-engineering.git
+git clone https://github.com/kmsamuel/cl-for-engineering-avalanche.git
 cd cl-for-engineering/avalanche
 pip install -e .
 
