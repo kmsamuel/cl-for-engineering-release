@@ -69,8 +69,7 @@ The repository is organized into three main benchmark directories (DRIVAERNET_Pa
 Each benchmark directory contains its own data/ folder that should be populated with the appropriate dataset files. For point cloud benchmarks (DrivAerNet, DrivAerNet++, ShapeNet, SHIPD, RAADL), place the .pt point cloud files and corresponding CSV files containing target values (drag coefficients, wave resistance, etc.) in this folder, along with train/test/validation split files. For the SHIPD_Par parametric dataset, the .npy files are provided for both inputs and outputs; for the DrivAerNet++ parametric dataset, a .csv file is provided as the input parameters. The datasets.py file in each benchmark automatically parses the data folder to create the dataset class, while the benchmark file handles the continual learning scenario creation and train/test/validation splitting.
 ### 2. Download Pretrained Model
 
-Select a pointnet pretrained model and download it. The one used in this study is found in [Model Zoo](https://drive.google.com/drive/folders/1xIOOFZ9fkLbQKkIsKYNRkPNmYbGAbYgZ)
-Place pretrained model in a `models/` directory in each benchmark folder:
+Select a pointnet pretrained model and download it. The one used in this study is found in [Model Zoo](https://drive.google.com/drive/folders/1xIOOFZ9fkLbQKkIsKYNRkPNmYbGAbYgZ). Rename the pretrained model as 'PN_best.pth' and place it in a `models/` directory in each benchmark folder:
 - `PN_best.pth` - Pretrained PointNet model
 
 ### 3. Run Experiments
